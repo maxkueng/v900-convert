@@ -2,7 +2,6 @@ var csvparse = require('csv-parse');
 var through = require('through');
 var combine = require('stream-combiner');
 var moment = require('moment');
-var gpsdistance = require('gps-distance');
 
 exports = module.exports = makeV900Stream;
 
@@ -71,38 +70,12 @@ var fixTime = through(function (chunk) {
 	this.queue(chunk);
 });
 
-var addDistance = function () {
-	var prevPoint = null;
-
-	return through(function (chunk) {
-		if (prevPoint === null) {
-			chunk.distance = 0;
-			chunk.kmh = 0;
-
-		} else {
-			chunk.distance = gpsdistance(prevPoint.latitude, prevPoint.longitude, chunk.latitude, chunk.longitude);
-
-			var timeDiff = chunk.time - prevPoint.time;
-			chunk.kmh = chunk.distance / ( timeDiff / 1000 / 60 / 60 );
-		}
-
-		prevPoint = {
-			latitude: chunk.latitude,
-			longitude: chunk.longitude,
-			time: chunk.time
-		};
-
-		this.queue(chunk);
-	});
-};
-
 function makeV900Stream () {
 	return combine(
 		fixNullBytes,
 		csv,
 		mapColumns,
 		fixCoords,
-		fixTime,
-		addDistance()
+		fixTime
 	);
 }
