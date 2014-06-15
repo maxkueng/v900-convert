@@ -1,23 +1,31 @@
 {
   "name": "v900-convert",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Transforms a Columbus V900 or V990 CSV stream to an object stream and fixes the values",
+  "keywords": [
+    "csv",
+    "gps",
+    "columbus",
+    "v900",
+    "v990",
+    "transform",
+    "streams",
+    "streams2"
+  ],
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/maxkueng/v900-convert.git"
   },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "gulp": "^3.7.0",
-    "gulp-convert": "^0.1.0"
-  },
+  "author": "Max Kueng <me@maxkueng.com> (http://maxkueng.com/)",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/maxkueng/v900-convert/raw/master/LICENSE"
+    }
+  ],
   "dependencies": {
-    "csv": "^0.4.0",
     "csv-parse": "0.0.4",
-    "gps-distance": "0.0.3",
-    "level": "^0.18.0",
-    "level-sublevel": "^5.2.0",
     "moment": "^2.6.0",
     "stream-combiner": "^0.2.1",
     "through": "^2.3.4"
