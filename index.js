@@ -9,7 +9,7 @@ function makeV900Stream () {
 
 	var csv = csvparse({
 		delimiter: ',',
-		columns: true
+		columns: null
 	});
 
 	var fixNullBytes = through(function (chunk) {
@@ -18,18 +18,54 @@ function makeV900Stream () {
 	});
 
 	var mapColumns = through(function (chunk) {
-		var obj = {
-			index: parseInt(chunk['INDEX']),
-			tag: String(chunk['TAG']),
-			date: String(chunk['DATE']),
-			time: String(chunk['TIME']),
-			latitude: String(chunk['LATITUDE N/S']),
-			longitude: String(chunk['LONGITUDE E/W']),
-			altitude: Number(chunk['HEIGHT']),
-			speed: Number(chunk['SPEED']),
-			heading: Number(chunk['HEADING']),
-			vox: Number(chunk['VOX'])
-		};
+		if (chunk[0] === 'INDEX') { return; }
+		if (!chunk.length) { return; }
+
+		var obj = {};
+		var v900Fields = { index: 'int', tag: 'string', date: 'string', time: 'string',
+		                   latitude: 'string', longitude: 'string', altitude: 'number',
+		                   speed: 'number', heading: 'number', vox: 'number' };
+
+		var v990Fields = { index: 'int', tag: 'string', date: 'string', time: 'string',
+		                   latitude: 'string', longitude: 'string', altitude: 'number',
+		                   speed: 'number', heading: 'number', fixMode: 'string', 
+		                   valid: 'string', pdop: 'number', hdop: 'number', vdop: 'number',
+		                   vox: 'number' };
+
+		Object.keys(v990Fields).forEach(function (fieldName) {
+			obj[fieldName] = null;
+		});
+
+		var fields;
+
+		if (chunk.length === Object.keys(v900Fields).length) {
+			fields = v900Fields;
+		} else if (chunk.length === Object.keys(v990Fields).length) {
+			fields = v990Fields;
+		}
+
+		if (!fields) { return; }
+
+		Object.keys(fields).forEach(function (fieldName, index) {
+			var value = chunk[index];
+			var type = fields[fieldName];
+
+			switch (type) {
+				case 'int':
+					value = parseInt(value, 10);
+					break;
+
+				case 'number':
+					value = Number(value);
+					break;
+
+				case 'string':
+					value = String(value);
+					break;
+			}
+
+			obj[fieldName] = value;
+		});
 
 		this.queue(obj);
 	});

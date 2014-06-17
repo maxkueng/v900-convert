@@ -1,6 +1,6 @@
 {
   "name": "v900-convert",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Transforms a Columbus V900 or V990 CSV stream to an object stream and fixes the values",
   "keywords": [
     "csv",
